@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Feedback Form</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { createRoot } = ReactDOM;
+    const root = createRoot(document.getElementById('root'));
+
+    function FeedbackForm() {
+      const [feedback, setFeedback] = React.useState('');
+      const [rating, setRating] = React.useState(null);
+      const [language, setLanguage] = React.useState('fr');
+      const [message, setMessage] = React.useState('');
+
+      const startSpeech = () => {
+        alert('Speech recognition started (mock). Replace with Web Speech API.');
+        setFeedback('Sample voice input: Long wait.');
+      };
+
+      const submitFeedback = async () => {
+        try {
+          const response = await axios.post('http://localhost:8000/feedback', {
+            feedback_text: feedback,
+            rating: rating,
+            language: language,
+          });
+          setMessage('Feedback submitted successfully!');
+          setFeedback('');
+          setRating(null);
+        } catch (error) {
+          setMessage('Error submitting feedback.');
+          console.error(error);
+        }
+      };
+
+      return (
+        <div className="container mx-auto p-4 max-w-md">
+          <h1 className="text-2xl font-bold mb-4">Patient Feedback</h1>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <label className="block mb-2">Language / Langue:</label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+            >
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+              <option value="du">Douala</option>
+              <option value="ba">Bassa</option>
+              <option value="ew">Ewondo</option>
+            </select>
+            <label className="block mb-2">Your Feedback / Votre retour:</label>
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+              placeholder="Enter your feedback here..."
+            ></textarea>
+            <button
+              onClick={startSpeech}
+              className="bg-blue-500 text-white p-2 rounded mb-4"
+            >
+              Record Voice / Enregistrer la voix
+            </button>
+            <label className="block mb-2">Rating / Note:</label>
+            <div className="flex space-x-2 mb-4">
+              {['😞', '😕', '😐', '😊', '😄'].map((emoji, index) => (
+                <button
+                  key={index}
+                  onClick={() => setRating(index + 1)}
+                  className={`text-2xl p-2 ${rating === index + 1 ? 'bg-gray-200' : ''}`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={submitFeedback}
+              className="bg-green-500 text-white p-2 rounded w-full"
+            >
+              Submit / Soumettre
+            </button>
+            {message && <p className="mt-4 text-center">{message}</p>}
+          </div>
+        </div>
+      );
+    }
+
+    root.render(<FeedbackForm />);
+  </script>
+</body>
+</html>
