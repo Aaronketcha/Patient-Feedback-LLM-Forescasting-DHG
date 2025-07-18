@@ -1,16 +1,39 @@
-# douala_generale_hospital_ai
+# 🗣️ Patient Feedback System — Flutter + FastAPI
 
-A new Flutter project.
+A modern, multilingual feedback system designed to collect and store patient reviews using speech, emotion, and text. Built with **Flutter** (frontend) and **FastAPI** (backend), it supports English, Français, Ewondo, Douala, and Sawa.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🌍 Use Case
 
-A few resources to get you started if this is your first Flutter project:
+Hospitals and health centers in Africa (and beyond) need a culturally contextualized feedback system. This app empowers patients to express their experiences using voice, text, emojis, and local languages.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📱 Flutter App (Frontend)
+
+### Key Features
+
+- ✨ **Speech to Text** & **Text to Speech**
+- 🎙️ **Voice Recorder** with playback
+- ⭐ **Star Rating System**
+- 😃 **Emotion Selector (Happy, Sad, etc.)**
+- 🌐 **Language Selector**: en, fr, ewondo, douala, sawa
+- 📄 **Local Validation & Submission**
+- 🧠 **Provider State Management**
+
+### 📦 Packages Used
+
+- `speech_to_text`
+- `flutter_tts`
+- `record`
+- `audioplayers`
+- `provider`
+- `flutter_rating_bar`
+- `intl` (for localization)
+
+### 🚀 Run Flutter App
+
+```bash
+flutter pub get
+flutter run
