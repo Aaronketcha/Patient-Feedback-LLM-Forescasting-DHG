@@ -1,0 +1,52 @@
+[
+  {
+    "id": "med001",
+    "medicationName": "Ibuprofen",
+    "duration": 6,
+    "dosage": "3 times/day",
+    "times": ["09:00", "16:30", "20:00"],
+    "image": "https://placehold.co/60x60/AEC6CF/FFFFFF?text=IBU",
+    "frequency": "daily",
+    "clientId": "+237657624346"
+  },
+  {
+    "id": "med002",
+    "medicationName": "Doliprane",
+    "duration": 6,
+    "dosage": "2 times/day",
+    "times": ["10:00", "18:00"],
+    "image": "https://placehold.co/60x60/DDA0DD/FFFFFF?text=DOLI",
+    "frequency": "every 2 days",
+    "clientId": "+237657624346"
+  },
+  {
+    "id": "med003",
+    "medicationName": "Antefac",
+    "duration": 6,
+    "dosage": "1 time/day",
+    "times": ["08:00"],
+    "image": "https://placehold.co/60x60/87CEEB/FFFFFF?text=ANTE",
+    "frequency": "daily",
+    "clientId": "+237657624346"
+  },
+  {
+    "id": "med004",
+    "medicationName": "Amoxicillin",
+    "duration": 10,
+    "dosage": "3 times/day",
+    "times": ["07:00", "15:00", "23:00"],
+    "image": "https://placehold.co/60x60/FFD700/FFFFFF?text=AMOX",
+    "frequency": "daily",
+    "clientId": "+237657624346"
+  },
+  {
+    "id": "med005",
+    "medicationName": "Vitamin C",
+    "duration": 30,
+    "dosage": "1 time/day",
+    "times": ["11:00"],
+    "image": "https://placehold.co/60x60/90EE90/FFFFFF?text=VITC",
+    "frequency": "every 3 days",
+    "clientId": "+237657624346"
+  }
+]

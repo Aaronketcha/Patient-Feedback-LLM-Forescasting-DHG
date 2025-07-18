@@ -1,71 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'providers/feedback_provider.dart';
-import 'screens/feedback_screen.dart';
-import 'l10n/generated/app_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
-  runApp(const MyApp());
+
+import 'models/medication.dart';
+import 'services/medication_data_service.dart';
+import 'providers/medication_provider.dart';
+import 'screens/home_screen.dart';
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('fr_FR', null);
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => MedicationProvider(
+        medicationService: MedicationDataService(), // Injection du service
+      ),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => FeedbackProvider(),
-      child: Consumer<FeedbackProvider>(
-        builder: (context, provider, child) {
-          return MaterialApp(
-            title: 'Hospital Feedback System',
-            debugShowCheckedModeBanner: false,
-
-            // Localization
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('fr'),
-              Locale('es'),
-            ],
-            locale: Locale(provider.currentLanguage),
-
-            // Theme
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              appBarTheme: AppBarTheme(
-                backgroundColor: Colors.blue[700],
-                foregroundColor: Colors.white,
-                elevation: 2,
-              ),
-              elevatedButtonTheme: ElevatedButtonThemeData(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              cardTheme: CardThemeData(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-
-            home: const FeedbackScreen(),
-          );
-        },
+    return MaterialApp(
+      title: 'Medication Reminder',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Inter', // Utilisation de la police Inter
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: const HomeScreen(),
     );
   }
 }
