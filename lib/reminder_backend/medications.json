@@ -1,0 +1,57 @@
+[
+  {
+    "id": "med001",
+    "medicationName": "Ibuprofen",
+    "startDate": "2025-07-16T00:00:00",
+    "duration": 6,
+    "dosage": "3 times/day",
+    "times": ["09:00", "16:30", "22:12"],
+    "image": "https://placehold.co/60x60/AEC6CF/FFFFFF?text=IBU",
+    "frequency": "daily",
+    "phoneNumber": "+237657624346"
+  },
+  {
+    "id": "med002",
+    "medicationName": "Doliprane",
+    "startDate": "2025-07-17T00:00:00",
+    "duration": 6,
+    "dosage": "2 times/day",
+    "times": ["10:00", "18:00"],
+    "image": "https://placehold.co/60x60/DDA0DD/FFFFFF?text=DOLI",
+    "frequency": "every 2 days",
+    "phoneNumber": "+237657624346"
+  },
+  {
+    "id": "med003",
+    "medicationName": "Antefac",
+    "startDate": "2025-07-18T00:00:00",
+    "duration": 6,
+    "dosage": "1 time/day",
+    "times": ["08:00"],
+    "image": "https://placehold.co/60x60/87CEEB/FFFFFF?text=ANTE",
+    "frequency": "daily",
+    "phoneNumber": "+237657624346"
+  },
+  {
+    "id": "med004",
+    "medicationName": "Amoxicillin",
+    "startDate": "2025-07-18T00:00:00",
+    "duration": 10,
+    "dosage": "3 times/day",
+    "times": ["07:00", "15:00", "23:00"],
+    "image": "https://placehold.co/60x60/FFD700/FFFFFF?text=AMOX",
+    "frequency": "daily",
+    "phoneNumber": "+237657624346"
+  },
+  {
+    "id": "med005",
+    "medicationName": "Vitamin C",
+    "startDate": "2025-07-15T00:00:00",
+    "duration": 30,
+    "dosage": "1 time/day",
+    "times": ["11:00"],
+    "image": "https://placehold.co/60x60/90EE90/FFFFFF?text=VITC",
+    "frequency": "every 3 days",
+    "phoneNumber": "+237657624346"
+  }
+]
