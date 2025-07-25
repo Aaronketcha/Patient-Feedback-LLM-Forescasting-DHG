@@ -164,7 +164,7 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-blue-100 p-4 shadow-sm">
+      {/* <div className="bg-white/80 backdrop-blur-sm border-b border-blue-100 p-4 shadow-sm">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-lg">AI</span>
@@ -174,10 +174,10 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
             <p className="text-sm text-gray-500">En ligne • Sécurisé</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 mt-16">
         {messages.map((message) => (
           <div
             key={message.id}
