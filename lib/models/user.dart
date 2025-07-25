@@ -1,4 +1,7 @@
 // models/user.dart
+import 'package:uuid/uuid.dart';
+
+
 class User {
   final String id;
   final String name;

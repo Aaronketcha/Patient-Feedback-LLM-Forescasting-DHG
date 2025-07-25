@@ -5,6 +5,18 @@ import '../constants/dimensions.dart';
 import '../widgets/common/custom_button.dart';
 import 'login_screen.dart';
 
+class OnboardingPage {
+  final IconData icon;
+  final String title;
+  final String description;
+
+  OnboardingPage({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+}
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -54,71 +66,84 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
+      body: SafeArea(
         child: Column(
-        children: [
-        // Skip button
-        Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingMedium),
-    child: Align(
-    alignment: Alignment.topRight,
-    child: TextButton(
-    onPressed: _navigateToLogin,
-    child: Text(
-    'Passer',
-    style: AppTextStyles.buttonMedium.copyWith(
-    color: AppColors.textSecondary,
-    ),
-    ),
-    ),
-    ),
-    ),
+          children: [
+            // Skip button
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingMedium),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: _navigateToLogin,
+                  child: Text(
+                    'Passer',
+                    style: AppTextStyles.buttonMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
-    // Pages
-    Expanded(
-    child: PageView.builder(
-    controller: _pageController,
-    onPageChanged: (index) => setState(() => _currentPage = index),
-    itemCount: _pages.length,
-    itemBuilder: (context, index) {
-    final page = _pages[index];
-    return Padding(
-    padding: const EdgeInsets.all(AppDimensions.paddingLarge),
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-    // Icon
-    Container(
-    width: 120,
-    height: 120,
-    decoration: BoxDecoration(
-    gradient: AppColors.primaryGradient,
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-    ),
-    child: Icon(
-    page.icon,
-    size: 60,
-    color: Colors.white,
-    ),
-    ),
-    const SizedBox(height: AppDimensions.spacingXLarge),
+            // Pages
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => _currentPage = index),
+                itemCount: _pages.length,
+                itemBuilder: (context, index) {
+                  final page = _pages[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(AppDimensions.paddingLarge),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+                          ),
+                          child: Icon(
+                            page.icon,
+                            size: 60,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.spacingXLarge),
+                        Text(
+                          page.title,
+                          style: AppTextStyles.h2,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: AppDimensions.spacingMedium),
+                        Text(
+                          page.description,
+                          style: AppTextStyles.bodyLarge.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
 
-    // Title
-    Text(
-    page.title,
-    style: AppTextStyles.h2,
-    textAlign: TextAlign.center,
-    ),
-    const SizedBox(height: AppDimensions.spacingMedium),
-
-    // Description
-    Text(
-    page.description,
-    style: AppTextStyles.bodyLarge.copyWith(
-    color: AppColors.textSecondary,
-    ),
-    textAlign: TextAlign.center,
-    ),
-    ],
-    ),
+            // Bouton suivant
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingMedium),
+              child: CustomButton(
+                text: _currentPage == _pages.length - 1 ? 'Commencer' : 'Suivant',
+                onPressed: _nextPage,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
+  }
+}

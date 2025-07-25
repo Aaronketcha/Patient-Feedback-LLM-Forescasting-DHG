@@ -1,5 +1,7 @@
-
 // models/chat.dart
+import 'package:uuid/uuid.dart';
+import 'message.dart'; // Make sure the path is correct based on your structure
+
 class Chat {
   final String id;
   final String title;
@@ -15,10 +17,11 @@ class Chat {
     DateTime? lastUpdated,
     this.isPinned = false,
     this.description,
-  }) : id = id ?? const Uuid().v4(),
+  })  : id = id ?? const Uuid().v4(),
         messages = messages ?? [],
         lastUpdated = lastUpdated ?? DateTime.now();
 
+  /// Create a copy of this chat with some modified fields
   Chat copyWith({
     String? title,
     List<Message>? messages,
@@ -27,7 +30,7 @@ class Chat {
     String? description,
   }) {
     return Chat(
-      id: id,
+      id: id, // Keep the original ID
       title: title ?? this.title,
       messages: messages ?? this.messages,
       lastUpdated: lastUpdated ?? this.lastUpdated,
@@ -36,6 +39,7 @@ class Chat {
     );
   }
 
+  /// Returns the latest message as preview (max 50 characters)
   String get lastMessagePreview {
     if (messages.isEmpty) return 'Nouvelle conversation';
     final lastMessage = messages.last;
@@ -44,6 +48,7 @@ class Chat {
         : lastMessage.content;
   }
 
+  /// Convert Chat to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -55,13 +60,15 @@ class Chat {
     };
   }
 
+  /// Create Chat from JSON
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
       id: json['id'],
       title: json['title'],
-      messages: (json['messages'] as List?)
+      messages: (json['messages'] as List<dynamic>?)
           ?.map((m) => Message.fromJson(m))
-          .toList() ?? [],
+          .toList() ??
+          [],
       lastUpdated: DateTime.parse(json['lastUpdated']),
       isPinned: json['isPinned'] ?? false,
       description: json['description'],
