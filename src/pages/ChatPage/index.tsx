@@ -11,17 +11,72 @@ interface Message {
   fileSize?: string;
 }
 
-const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) => {
+interface ConversationHistory {
+  id: number;
+  patient_id: string;
+  user_message: string;
+  bot_response: string;
+  timestamp: Date;
+  language: string;
+}
+
+const ChatPage = ({
+  selectedLanguage = "fr",
+  patientId = "default_patient",
+  onSaveConversation,
+  conversationHistory = []
+}: {
+  selectedLanguage?: string;
+  patientId?: string;
+  onSaveConversation?: (conversation: Omit<ConversationHistory, 'id' | 'timestamp'>) => Promise<void>;
+  conversationHistory?: ConversationHistory[];
+}) => {
   console.log(selectedLanguage)
-  const [messages, setMessages] = useState<Message[]>([
-    {
+
+  // Load conversation history into messages format
+  const loadHistoryAsMessages = (history: ConversationHistory[]): Message[] => {
+    const historyMessages: Message[] = [];
+
+    history.forEach((conversation) => {
+      // Add user message
+      historyMessages.push({
+        id: `history-user-${conversation.id}`,
+        text: conversation.user_message,
+        isUser: true,
+        timestamp: new Date(conversation.timestamp),
+        type: 'text'
+      });
+
+      // Add bot response
+      historyMessages.push({
+        id: `history-bot-${conversation.id}`,
+        text: conversation.bot_response,
+        isUser: false,
+        timestamp: new Date(conversation.timestamp),
+        type: 'text'
+      });
+    });
+
+    return historyMessages;
+  };
+
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const welcomeMessage: Message = {
       id: '1',
-      text: 'Bonjour ! Je suis votre assistant médical IA. Comment puis-je vous aider aujourd\'hui ? 🩺',
+      text: selectedLanguage === 'en'
+        ? 'Hello! I am your medical AI assistant. How can I help you today? 🩺'
+        : 'Bonjour ! Je suis votre assistant médical IA. Comment puis-je vous aider aujourd\'hui ? 🩺',
       isUser: false,
       timestamp: new Date(),
       type: 'text'
-    }
-  ]);
+    };
+
+    const historyMessages = loadHistoryAsMessages(conversationHistory);
+
+    // If there's history, don't show welcome message
+    return historyMessages.length > 0 ? historyMessages : [welcomeMessage];
+  });
+
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -29,11 +84,14 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputText.trim() && !uploadedFile) return;
+
+    let userMessageText = '';
 
     // Send text message
     if (inputText.trim()) {
+      userMessageText = inputText;
       const newMessage: Message = {
         id: Date.now().toString(),
         text: inputText,
@@ -46,9 +104,15 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
 
     // Send file message
     if (uploadedFile) {
+      const fileText = selectedLanguage === 'en'
+        ? `Medical document sent: ${uploadedFile.name}`
+        : `Document médical envoyé : ${uploadedFile.name}`;
+
+      userMessageText = uploadedFile ? fileText : userMessageText;
+
       const fileMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Document médical envoyé`,
+        text: selectedLanguage === 'en' ? 'Medical document sent' : 'Document médical envoyé',
         isUser: true,
         timestamp: new Date(),
         type: 'file',
@@ -63,23 +127,45 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
     setIsTyping(true);
 
     // Simulate AI response
-    setTimeout(() => {
+    setTimeout(async () => {
       setIsTyping(false);
-      const responses = [
+
+      const responses = selectedLanguage === 'en' ? [
+        'I understand your concern. Can you give me more details about your symptoms? 🤔',
+        'Thank you for this information. How long have you been experiencing these symptoms? 📋',
+        'Alright, I have received your document. Let me analyze it to help you better. 📄',
+        'These symptoms can have several causes. Do you have any particular medical history? 🏥'
+      ] : [
         'Je comprends votre préoccupation. Pouvez-vous me donner plus de détails sur vos symptômes ? 🤔',
         'Merci pour ces informations. Depuis quand ressentez-vous ces symptômes ? 📋',
         'D\'accord, j\'ai bien reçu votre document. Laissez-moi l\'analyser pour vous aider au mieux. 📄',
         'Ces symptômes peuvent avoir plusieurs causes. Avez-vous des antécédents médicaux particuliers ? 🏥'
       ];
-      
+
+      const botResponseText = responses[Math.floor(Math.random() * responses.length)];
+
       const aiResponse: Message = {
         id: (Date.now() + 2).toString(),
-        text: responses[Math.floor(Math.random() * responses.length)],
+        text: botResponseText,
         isUser: false,
         timestamp: new Date(),
         type: 'text'
       };
       setMessages(prev => [...prev, aiResponse]);
+
+      // Save conversation to database
+      if (onSaveConversation && userMessageText) {
+        try {
+          await onSaveConversation({
+            patient_id: patientId,
+            user_message: userMessageText,
+            bot_response: botResponseText,
+            language: selectedLanguage
+          });
+        } catch (error) {
+          console.error('Error saving conversation:', error);
+        }
+      }
     }, 2000);
   };
 
@@ -98,7 +184,10 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
       if (allowedTypes.includes(file.type)) {
         setUploadedFile(file);
       } else {
-        alert('Type de fichier non supporté. Veuillez choisir un PDF, une image ou un fichier texte.');
+        const errorMessage = selectedLanguage === 'en'
+          ? 'Unsupported file type. Please choose a PDF, image or text file.'
+          : 'Type de fichier non supporté. Veuillez choisir un PDF, une image ou un fichier texte.';
+        alert(errorMessage);
       }
     }
   };
@@ -108,41 +197,64 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-      
+
       const audioChunks: Blob[] = [];
-      
+
       mediaRecorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
       };
-      
-      mediaRecorder.onstop = () => {
+
+      mediaRecorder.onstop = async () => {
         // const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const voiceMessageText = selectedLanguage === 'en' ? 'Voice message sent 🎤' : 'Message vocal envoyé 🎤';
+
         const voiceMessage: Message = {
           id: Date.now().toString(),
-          text: 'Message vocal envoyé 🎤',
+          text: voiceMessageText,
           isUser: true,
           timestamp: new Date(),
           type: 'voice'
         };
         setMessages(prev => [...prev, voiceMessage]);
-        
+
         // Simuler une réponse à l'audio
-        setTimeout(() => {
+        setTimeout(async () => {
+          const botResponseText = selectedLanguage === 'en'
+            ? 'I have received your voice message. Could you repeat or clarify certain points? 🔊'
+            : 'J\'ai bien reçu votre message vocal. Pouvez-vous répéter ou préciser certains points ? 🔊';
+
           const aiResponse: Message = {
             id: (Date.now() + 1).toString(),
-            text: 'J\'ai bien reçu votre message vocal. Pouvez-vous répéter ou préciser certains points ? 🔊',
+            text: botResponseText,
             isUser: false,
             timestamp: new Date(),
             type: 'text'
           };
           setMessages(prev => [...prev, aiResponse]);
+
+          // Save voice conversation to database
+          if (onSaveConversation) {
+            try {
+              await onSaveConversation({
+                patient_id: patientId,
+                user_message: voiceMessageText,
+                bot_response: botResponseText,
+                language: selectedLanguage
+              });
+            } catch (error) {
+              console.error('Error saving voice conversation:', error);
+            }
+          }
         }, 1500);
       };
-      
+
       mediaRecorder.start();
       setIsRecording(true);
     } catch {
-      alert('Impossible d\'accéder au microphone. Veuillez vérifier vos paramètres.');
+      const errorMessage = selectedLanguage === 'en'
+        ? 'Unable to access microphone. Please check your settings.'
+        : 'Impossible d\'accéder au microphone. Veuillez vérifier vos paramètres.';
+      alert(errorMessage);
     }
   };
 
@@ -170,8 +282,15 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
             <span className="text-white font-bold text-lg">AI</span>
           </div>
           <div>
-            <h1 className="font-semibold text-gray-800">Assistant Médical IA</h1>
-            <p className="text-sm text-gray-500">En ligne • Sécurisé</p>
+            <h1 className="font-semibold text-gray-800">
+              {selectedLanguage === 'en' ? 'Medical AI Assistant' : 'Assistant Médical IA'}
+            </h1>
+            <p className="text-sm text-gray-500">
+              {selectedLanguage === 'en' ? 'Online • Secure' : 'En ligne • Sécurisé'}
+            </p>
+          </div>
+          <div className="ml-auto text-sm text-gray-500">
+            Patient ID: {patientId}
           </div>
         </div>
       </div> */}
@@ -189,13 +308,12 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
                   <span className="text-white text-xs font-bold">AI</span>
                 </div>
               )}
-              
+
               <div
-                className={`px-4 py-3 rounded-2xl shadow-sm ${
-                  message.isUser
+                className={`px-4 py-3 rounded-2xl shadow-sm ${message.isUser
                     ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-br-sm'
                     : 'bg-white text-gray-800 border border-gray-100 rounded-bl-sm'
-                }`}
+                  }`}
               >
                 {message.type === 'file' && (
                   <div className="flex items-center space-x-2 mb-2">
@@ -206,16 +324,16 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
                     </div>
                   </div>
                 )}
-                
+
                 {message.type === 'voice' && (
                   <div className="flex items-center space-x-2 mb-2">
                     <Volume2 className="w-4 h-4" />
                     <div className="text-xs">
-                      <p>Message vocal • 0:05</p>
+                      <p>{selectedLanguage === 'en' ? 'Voice message • 0:05' : 'Message vocal • 0:05'}</p>
                     </div>
                   </div>
                 )}
-                
+
                 <p className="text-sm leading-relaxed">{message.text}</p>
                 <p className={`text-xs mt-2 ${message.isUser ? 'text-blue-100' : 'text-gray-400'}`}>
                   {message.timestamp.toLocaleTimeString('fr-FR', {
@@ -227,7 +345,7 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
             </div>
           </div>
         ))}
-        
+
         {/* Typing indicator */}
         {isTyping && (
           <div className="flex justify-start animate-pulse">
@@ -260,7 +378,7 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
                   <p className="text-blue-600">{(uploadedFile.size / 1024).toFixed(1)} KB</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={removeFile}
                 className="p-1 hover:bg-blue-200 rounded-full transition-colors"
               >
@@ -281,22 +399,23 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
               accept=".pdf,.jpg,.jpeg,.png,.txt"
               className="hidden"
             />
-            <button 
+            <button
               onClick={() => fileInputRef.current?.click()}
               className="p-3 rounded-xl border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 group"
-              title="Ajouter un fichier"
+              title={selectedLanguage === 'en' ? "Add a file" : "Ajouter un fichier"}
             >
               <FileText className="w-5 h-5 text-gray-600 group-hover:text-blue-600" />
             </button>
-            
-            <button 
+
+            <button
               onClick={isRecording ? stopRecording : startRecording}
-              className={`p-3 rounded-xl border transition-all duration-200 ${
-                isRecording 
-                  ? 'bg-red-500 border-red-500 text-white animate-pulse' 
+              className={`p-3 rounded-xl border transition-all duration-200 ${isRecording
+                  ? 'bg-red-500 border-red-500 text-white animate-pulse'
                   : 'border-gray-200 hover:bg-blue-50 hover:border-blue-300 text-gray-600 hover:text-blue-600'
-              }`}
-              title={isRecording ? "Arrêter l'enregistrement" : "Enregistrer un message vocal"}
+                }`}
+              title={isRecording
+                ? (selectedLanguage === 'en' ? "Stop recording" : "Arrêter l'enregistrement")
+                : (selectedLanguage === 'en' ? "Record a voice message" : "Enregistrer un message vocal")}
             >
               {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
             </button>
@@ -308,7 +427,9 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Décrivez vos symptômes ou posez votre question médicale..."
+              placeholder={selectedLanguage === 'en'
+                ? "Describe your symptoms or ask your medical question..."
+                : "Décrivez vos symptômes ou posez votre question médicale..."}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-h-32 bg-white/90 backdrop-blur-sm"
               rows={1}
               style={{ minHeight: '48px' }}
@@ -319,11 +440,10 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
           <button
             onClick={handleSendMessage}
             disabled={!inputText.trim() && !uploadedFile}
-            className={`p-3 rounded-xl transition-all duration-200 ${
-              inputText.trim() || uploadedFile
+            className={`p-3 rounded-xl transition-all duration-200 ${inputText.trim() || uploadedFile
                 ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 shadow-lg'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
+              }`}
           >
             <Send className="w-5 h-5" />
           </button>
@@ -333,7 +453,9 @@ const ChatPage = ({ selectedLanguage = "fr" }: { selectedLanguage?: string }) =>
         {isRecording && (
           <div className="mt-3 flex items-center justify-center space-x-2 text-red-500">
             <div className="w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
-            <span className="text-sm font-medium">Enregistrement en cours...</span>
+            <span className="text-sm font-medium">
+              {selectedLanguage === 'en' ? 'Recording in progress...' : 'Enregistrement en cours...'}
+            </span>
           </div>
         )}
       </div>
