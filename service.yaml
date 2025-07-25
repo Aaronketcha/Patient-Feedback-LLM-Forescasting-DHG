@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: reminder-backend-service
+spec:
+  template:
+    spec:
+      containers:
+        - image: us-central1-docker.pkg.dev/grounded-datum-466612-u9/patient-fastapi/reminder-backend:latest
+          env: []
+          ports:
+            - containerPort: 8000
