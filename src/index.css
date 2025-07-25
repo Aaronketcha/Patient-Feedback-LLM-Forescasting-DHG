@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #257CFF;
+  --color-secondary: #4A5CD0;
+  --color-sky_blue: #68DBFF;
+}
+
+.usual_gradient {
+  @apply bg-linear-to-r from-[#FFF] to-[#68DBFF]
+}
+
+/* * {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: poppins, sans-serif;
+} */
