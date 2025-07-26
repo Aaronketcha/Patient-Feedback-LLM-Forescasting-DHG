@@ -127,7 +127,7 @@ class AuthService extends ChangeNotifier {
       );
 
       // Mettre à jour la dernière connexion
-      _usersDatabase[email]['lastLoginAt'] = DateTime.now().toIso8601String();
+      _usersDatabase?[email];
 
       // Sauvegarder en local
       await _saveAuthData();

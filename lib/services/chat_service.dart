@@ -83,7 +83,7 @@ class ChatService extends ChangeNotifier {
         Message(
           content: 'Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider aujourd\'hui ?',
           sender: MessageSender.bot,
-          timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+          timestamp: DateTime.now().subtract( Duration(minutes: 5)),
         ),
       ],
     );
@@ -152,7 +152,7 @@ class ChatService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1000 + Random().nextInt(2000)));
+      await Future.delayed( Duration(milliseconds: 1000 + Random().nextInt(2000)));
 
       // Generate bot response
       final botResponse = await _generateBotResponse(content);

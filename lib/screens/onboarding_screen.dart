@@ -139,7 +139,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: CustomButton(
                 text: _currentPage == _pages.length - 1 ? 'Commencer' : 'Suivant',
                 onPressed: _nextPage,
+                backgroundColor: AppColors.primary,       // ou la couleur de ton choix
+                textColor: Colors.white,                  // couleur du texte
+                borderColor: AppColors.primary,           // si tu veux une bordure colorée
               ),
+
             ),
           ],
         ),

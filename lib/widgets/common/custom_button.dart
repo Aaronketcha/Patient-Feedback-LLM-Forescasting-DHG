@@ -25,7 +25,7 @@ class CustomButton extends StatefulWidget {
     this.isLoading = false,
     this.isFullWidth = true,
     this.icon,
-    this.customChild,
+    this.customChild, required Color backgroundColor, required Color textColor, required Color borderColor,
   });
 
   @override

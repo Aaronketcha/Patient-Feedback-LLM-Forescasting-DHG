@@ -1,67 +1,53 @@
-// models/user.dart
-import 'package:uuid/uuid.dart';
-
-
 class User {
   final String id;
   final String name;
   final String email;
-  final String? avatarUrl;
+  final String? profilePicture;
   final DateTime createdAt;
-  final bool isPremium;
-  final Map<String, dynamic> preferences;
+  final DateTime? lastLoginAt;
+  final bool isEmailVerified;
+  final int totalChats;
+  final int totalMessages;
+  final int totalTimeSpent;
+
+
 
   User({
-    String? id,
+    required this.id,
     required this.name,
     required this.email,
-    this.avatarUrl,
-    DateTime? createdAt,
-    this.isPremium = false,
-    Map<String, dynamic>? preferences,
-  }) : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now(),
-        preferences = preferences ?? {};
+    this.profilePicture,
+    required this.createdAt,
+    this.lastLoginAt,
+    required this.isEmailVerified,
+    required this.totalChats,
+    required this.totalMessages,
+    required this.totalTimeSpent,
+  });
 
   User copyWith({
+    String? id,
     String? name,
     String? email,
-    String? avatarUrl,
-    bool? isPremium,
-    Map<String, dynamic>? preferences,
+    String? profilePicture,
+    DateTime? createdAt,
+    DateTime? lastLoginAt,
+    bool? isEmailVerified,
+    int? totalChats,
+    int? totalMessages,
+    int? totalTimeSpent,
   }) {
     return User(
-      id: id,
+      id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-      createdAt: createdAt,
-      isPremium: isPremium ?? this.isPremium,
-      preferences: preferences ?? this.preferences,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'avatarUrl': avatarUrl,
-      'createdAt': createdAt.toIso8601String(),
-      'isPremium': isPremium,
-      'preferences': preferences,
-    };
-  }
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      avatarUrl: json['avatarUrl'],
-      createdAt: DateTime.parse(json['createdAt']),
-      isPremium: json['isPremium'] ?? false,
-      preferences: Map<String, dynamic>.from(json['preferences'] ?? {}),
+      profilePicture: profilePicture ?? this.profilePicture,
+      createdAt: createdAt ?? this.createdAt,
+      lastLoginAt: lastLoginAt ?? this.lastLoginAt,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+      totalChats: totalChats ?? this.totalChats,
+      totalMessages: totalMessages ?? this.totalMessages,
+      totalTimeSpent: totalTimeSpent ?? this.totalTimeSpent,
     );
   }
 }

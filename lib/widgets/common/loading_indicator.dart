@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../constants/colors.dart';
-import '../constants/text_styles.dart';
-import '../constants/dimensions.dart';
-
+import 'package:chatbot_ai/constants/text_styles.dart';
+import 'package:chatbot_ai/constants/colors.dart';
+import 'package:chatbot_ai/constants/dimensions.dart';
 enum LoadingType {
   circular,
   dots,
@@ -399,7 +398,7 @@ class LoadingOverlay extends StatelessWidget {
                 padding: const EdgeInsets.all(AppDimensions.paddingLarge),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMedium),
+                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMedium as double),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.shadow.withOpacity(0.2),

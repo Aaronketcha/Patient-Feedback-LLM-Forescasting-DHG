@@ -52,22 +52,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      await authService.register(
+      final result = await authService.signUp(
         _nameController.text.trim(),
         _emailController.text.trim(),
         _passwordController.text,
       );
 
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+      if (result.success) {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erreur inscription: ${result.message}'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur d\'inscription: ${e.toString()}'),
+            content: Text('Erreur d\'inscription inattendue: ${e.toString()}'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -78,6 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +291,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   text: 'Créer un compte',
                   onPressed: _handleRegister,
                   isLoading: _isLoading,
+                  backgroundColor: AppColors.primary,
+                  borderColor: AppColors.primary,
+                  textColor: Colors.white,
                 ),
+
 
                 const SizedBox(height: AppDimensions.spacingLarge),
 
@@ -308,19 +324,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   type: ButtonType.outline,
                   icon: Icons.g_mobiledata,
                   onPressed: () {
-                    // TODO: Implement Google registration
+                    // TODO
                   },
+                  backgroundColor: Colors.transparent, // ou la couleur que tu veux
+                  borderColor: AppColors.primary,
+                  textColor: AppColors.primary,
                 ),
-
-                const SizedBox(height: AppDimensions.spacingMedium),
 
                 CustomButton(
                   text: 'Continuer avec Apple',
                   type: ButtonType.secondary,
                   icon: Icons.apple,
                   onPressed: () {
-                    // TODO: Implement Apple registration
+                    // TODO
                   },
+                  backgroundColor: AppColors.accent,  // au lieu de AppColors.secondary
+                  borderColor: AppColors.accent,
+                  textColor: Colors.white,
                 ),
 
                 const SizedBox(height: AppDimensions.spacingXLarge),

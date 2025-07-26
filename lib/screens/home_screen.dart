@@ -127,11 +127,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 gradient: AppColors.primaryGradient,
                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
               ),
-              child: user?.avatarUrl != null
+              child: user?.profilePicture != null
                   ? ClipRRect(
                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                 child: Image.network(
-                  user!.avatarUrl!,
+                  user!.profilePicture!,
                   fit: BoxFit.cover,
                 ),
               )
@@ -140,6 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 size: AppDimensions.iconMedium,
               ),
+
             ),
           ],
         );
@@ -567,7 +568,11 @@ class _HomeScreenState extends State<HomeScreen> {
             text: 'Nouvelle conversation',
             onPressed: _startNewChat,
             isFullWidth: false,
+            backgroundColor: AppColors.primary,
+            textColor: Colors.white,
+            borderColor: AppColors.primary,
           ),
+
         ],
       ),
     );

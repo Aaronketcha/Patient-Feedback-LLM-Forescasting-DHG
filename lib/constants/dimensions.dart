@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppDimensions {
   // Padding et marges
   static const double paddingXSmall = 4.0;
@@ -54,4 +56,6 @@ class AppDimensions {
   static const int animationDurationFast = 200;
   static const int animationDurationMedium = 300;
   static const int animationDurationSlow = 500;
+
+  static BorderRadius get borderRadiusMedium => BorderRadius.circular(radiusMedium);
 }
