@@ -8,13 +8,11 @@ import 'package:url_launcher/url_launcher.dart'; // Pour lancer WhatsApp
 class MedicationProvider with ChangeNotifier {
   List<Medication> _medications = [];
   DateTime _selectedDate = DateTime.now();
-  final String _whatsappNumber = "+237657624346"; // Numéro WhatsApp par défaut
 
   final MedicationDataService medicationService; // Dépendance injectée
 
   List<Medication> get medications => _medications;
   DateTime get selectedDate => _selectedDate;
-  String get whatsappNumber => _whatsappNumber;
 
   MedicationProvider({required this.medicationService}) {
     _loadMedications();
@@ -44,9 +42,9 @@ class MedicationProvider with ChangeNotifier {
   }
 
   // Lancer WhatsApp
-  Future<void> launchWhatsApp(String message) async {
+  Future<void> launchWhatsApp(String phoneNumber, String message) async {
     final Uri whatsappUri =
-    Uri.parse('whatsapp://send?phone=$_whatsappNumber&text=${Uri.encodeComponent(message)}');
+    Uri.parse('whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}');
     if (await canLaunchUrl(whatsappUri)) {
       await launchUrl(whatsappUri);
     } else {

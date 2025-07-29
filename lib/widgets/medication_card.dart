@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Pour DateFormat
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http; // Ajout pour les appels API
 
-// Importez les modèles et fournisseurs nécessaires
 import '../models/medication.dart';
 import '../providers/medication_provider.dart';
-import '../utils/date_utils.dart'; // Importez les utilitaires de date
+import '../utils/date_utils.dart';
 
-// Un widget réutilisable pour afficher les détails d'un médicament.
 class MedicationCard extends StatefulWidget {
   final Medication medication;
   final DateTime forDate;
@@ -24,12 +23,34 @@ class MedicationCard extends StatefulWidget {
 
 class _MedicationCardState extends State<MedicationCard> {
   bool _isExpanded = false;
+  String _apiResponse = 'Appuyez sur le bouton pour vérifier l\'API'; // État pour la réponse API
 
   @override
   Widget build(BuildContext context) {
     final medicationProvider = Provider.of<MedicationProvider>(context);
     final currentDay = widget.forDate;
     final now = DateTime.now();
+
+    // Méthode pour appeler l'API
+    Future<void> _callApi() async {
+      try {
+        final response = await http.get(Uri.parse(
+            'https://reminder-backend-service-231068023969.us-east1.run.app/medications/'));
+        if (response.statusCode == 200) {
+          setState(() {
+            _apiResponse = 'Réponse API : ${response.body}';
+          });
+        } else {
+          setState(() {
+            _apiResponse = 'Erreur API : Statut ${response.statusCode}';
+          });
+        }
+      } catch (e) {
+        setState(() {
+          _apiResponse = 'Erreur de connexion : $e';
+        });
+      }
+    }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
@@ -54,7 +75,6 @@ class _MedicationCardState extends State<MedicationCard> {
                 width: 70,
                 height: 70,
                 fit: BoxFit.cover,
-                // Ajout d'un loadingBuilder pour diagnostiquer les problèmes de chargement d'image
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Center(
@@ -191,20 +211,20 @@ class _MedicationCardState extends State<MedicationCard> {
                             ),
                           ),
                           const Spacer(),
-                          if (!isTaken) // Bouton pour marquer comme pris, seulement si pas déjà pris
+                          if (!isTaken)
                             ElevatedButton.icon(
                               onPressed: () {
                                 medicationProvider.markMedicationTimeAsTaken(
                                     widget.medication, currentDay, timeStr);
-                                // Lancer WhatsApp
                                 final message =
                                     "Rappel: J'ai pris mon ${widget.medication.medicationName} à $timeStr le ${DateFormat('dd/MM/yyyy').format(currentDay)}.";
-                                medicationProvider.launchWhatsApp(message);
+                                medicationProvider.launchWhatsApp(widget.medication.phoneNumber, message);
                               },
                               icon: const Icon(Icons.done_all, size: 18),
                               label: const Text('Marquer comme pris'),
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white, backgroundColor: isMissed ? Colors.red[400] : Colors.blueAccent,
+                                foregroundColor: Colors.white,
+                                backgroundColor: isMissed ? Colors.red[400] : Colors.blueAccent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -215,6 +235,33 @@ class _MedicationCardState extends State<MedicationCard> {
                       ),
                     );
                   }).toList(),
+                ),
+                const SizedBox(height: 16),
+                // Bouton pour appeler l'API
+                ElevatedButton(
+                  onPressed: () async {
+                    await _callApi();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                  child: const Text('Appeler l\'API'),
+                ),
+                const SizedBox(height: 8),
+                // Affichage de la réponse
+                Text(
+                  _apiResponse,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: _apiResponse.contains('Erreur')
+                        ? Colors.red
+                        : Colors.black87,
+                  ),
                 ),
               ],
             ),

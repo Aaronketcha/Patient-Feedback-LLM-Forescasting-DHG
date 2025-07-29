@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Pour DateFormat
-import 'package:table_calendar/table_calendar.dart' hide isSameDay; // Pour le widget TableCalendar
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart' hide isSameDay;
 
-// Importez les composants nécessaires
 import '../models/medication.dart';
 import '../providers/medication_provider.dart';
+import '../utils/date_utils.dart';
 import '../widgets/medication_card.dart';
-import '../utils/date_utils.dart'; // Importez les utilitaires de date
 
-// Représente l'interface utilisateur de l'écran du calendrier complet.
 class FullCalendarScreen extends StatefulWidget {
   const FullCalendarScreen({super.key});
 
@@ -32,7 +30,6 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
   Widget build(BuildContext context) {
     final medicationProvider = Provider.of<MedicationProvider>(context);
 
-    // Fonction pour obtenir les événements (médicaments) pour un jour donné
     List<Medication> _getEventsForDay(DateTime day) {
       return medicationProvider.medications.where((med) {
         return med.getMedicationDays().any((medDay) => isSameDay(medDay, day));
@@ -53,7 +50,7 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
       body: Column(
         children: [
           TableCalendar(
-            locale: 'fr_FR', // Définir la locale pour le français
+            locale: 'fr_FR',
             firstDay: DateTime.utc(2023, 1, 1),
             lastDay: DateTime.utc(2026, 12, 31),
             focusedDay: _focusedDay,
@@ -64,9 +61,9 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 _selectedDay = selectedDay;
-                _focusedDay = focusedDay; // update `_focusedDay` here as well
+                _focusedDay = focusedDay;
               });
-              medicationProvider.setSelectedDate(selectedDay); // Mettre à jour la date sélectionnée dans le provider
+              medicationProvider.setSelectedDate(selectedDay);
             },
             onFormatChanged: (format) {
               if (_calendarFormat != format) {
@@ -78,7 +75,7 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
             },
-            eventLoader: _getEventsForDay, // Utilise eventLoader pour les points
+            eventLoader: _getEventsForDay,
             calendarBuilders: CalendarBuilders(
               markerBuilder: (context, date, events) {
                 if (events.isNotEmpty) {
@@ -92,7 +89,7 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
               },
             ),
             headerStyle: HeaderStyle(
-              formatButtonVisible: false, // Cache le bouton de format (semaine/mois)
+              formatButtonVisible: false,
               titleCentered: true,
               titleTextStyle: const TextStyle(
                 fontSize: 20,
@@ -104,7 +101,7 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
             ),
             calendarStyle: CalendarStyle(
               todayDecoration: BoxDecoration(
-                color: Colors.pinkAccent.withOpacity(0.3),
+                color: Colors.blue[700]?.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
@@ -117,7 +114,7 @@ class _FullCalendarScreenState extends State<FullCalendarScreen> {
             ),
           ),
           const SizedBox(height: 8.0),
-          Expanded( // Utilisation d'Expanded pour que le ListView prenne l'espace restant
+          Expanded(
             child: _selectedDay == null
                 ? const Center(child: Text('Sélectionnez une date pour voir les médicaments.'))
                 : medicationProvider.getMedicationsForSelectedDay().isEmpty

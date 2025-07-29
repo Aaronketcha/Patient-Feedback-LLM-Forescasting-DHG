@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Pour DateFormat
+import 'package:intl/intl.dart';
 
 // Importez les composants nécessaires
 import '../providers/medication_provider.dart';
 import '../widgets/daily_calendar_bar.dart';
 import '../widgets/medication_card.dart';
-import 'full_calendar_screen.dart'; // Pour la navigation vers l'écran du calendrier
+import 'full_calendar_screen.dart';
 
 // Représente l'interface utilisateur de l'écran d'accueil.
 class HomeScreen extends StatelessWidget {
@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView( // Permet le défilement si le contenu dépasse la taille de l'écran
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,7 +84,6 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Barre du calendrier journalier
             DailyCalendarBar(
               selectedDate: medicationProvider.selectedDate,
               onDateSelected: (date) {
@@ -93,8 +92,6 @@ class HomeScreen extends StatelessWidget {
               medications: medicationProvider.medications,
             ),
             const SizedBox(height: 20),
-            // Le ListView.builder est enveloppé dans SingleChildScrollView,
-            // il doit donc avoir shrinkWrap: true et physics: NeverScrollableScrollPhysics()
             medicationProvider.getMedicationsForSelectedDay().isEmpty
                 ? Center(
               child: Text(
@@ -107,8 +104,8 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               itemCount:
               medicationProvider.getMedicationsForSelectedDay().length,
-              shrinkWrap: true, // Important: pour que le ListView prenne juste la taille de ses enfants
-              physics: const NeverScrollableScrollPhysics(), // Important: pour désactiver le défilement du ListView lui-même
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final medication = medicationProvider
                     .getMedicationsForSelectedDay()[index];
@@ -145,7 +142,7 @@ class HomeScreen extends StatelessWidget {
                 // Action pour "Today"
               },
             ),
-            const SizedBox(width: 48), // Espace pour le FAB
+            const SizedBox(width: 48),
             IconButton(
               icon: Icon(Icons.medication, color: Colors.blue[700], size: 28),
               onPressed: () {

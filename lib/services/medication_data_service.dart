@@ -1,21 +1,26 @@
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http; // Importez le package http
 import '../models/medication.dart'; // Importez le modèle Medication
 
-// Gère le chargement des données brutes des médicaments.
+// Gère le chargement des données brutes des médicaments via une API HTTP.
 class MedicationDataService {
+  final String baseUrl;
+
+  MedicationDataService({required this.baseUrl});
+
   Future<List<Medication>> loadMedications() async {
     try {
-      final String response =
-      await rootBundle.loadString('lib/assets/data/medications.json');
-      final List<dynamic> data = json.decode(response);
-      return data.map((json) {
-        // Pour simuler une date de début réaliste, nous allons fixer la date de début
-        // de toutes les médications à une date récente ou à aujourd'hui.
-        return Medication.fromJson(json, DateTime.now().subtract(const Duration(days: 2)));
-      }).toList();
+      final response = await http.get(Uri.parse('$baseUrl/medications'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Medication.fromJson(json)).toList();
+      } else {
+        print('Erreur lors du chargement des médicaments depuis l\'API: ${response.statusCode}');
+        return [];
+      }
     } catch (e) {
-      print('Erreur lors du chargement des médicaments via service: $e');
+      print('Erreur de connexion lors du chargement des médicaments: $e');
       return []; // Retourne une liste vide en cas d'erreur
     }
   }

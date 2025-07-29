@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Pour DateFormat
+import 'package:intl/intl.dart';
 
-// Importez les modèles et utilitaires nécessaires
 import '../models/medication.dart';
 import '../utils/date_utils.dart';
 
-// Un widget réutilisable pour afficher la barre de calendrier journalière.
 class DailyCalendarBar extends StatelessWidget {
   final DateTime selectedDate;
   final Function(DateTime) onDateSelected;
@@ -20,9 +18,8 @@ class DailyCalendarBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtenir les 7 jours à partir de la date sélectionnée (centrée si possible)
     List<DateTime> weekDays = [];
-    DateTime startOfWeek = selectedDate.subtract(Duration(days: selectedDate.weekday - 1)); // Lundi de la semaine
+    DateTime startOfWeek = selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
 
     for (int i = 0; i < 7; i++) {
       weekDays.add(startOfWeek.add(Duration(days: i)));
@@ -46,11 +43,11 @@ class DailyCalendarBar extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: isSelected ? Colors.pinkAccent : Colors.transparent,
+                    color: isSelected ? Colors.blue[700] : Colors.transparent,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    DateFormat('EEE', 'fr_FR').format(date).substring(0, 3), // Jour de la semaine (Lun, Mar, etc.)
+                    DateFormat('EEE', 'fr_FR').format(date).substring(0, 3),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -60,11 +57,11 @@ class DailyCalendarBar extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  DateFormat('dd').format(date), // Numéro du jour
+                  DateFormat('dd').format(date),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.pinkAccent : Colors.black87,
+                    color: isSelected ? Colors.blue[700] : Colors.black87,
                   ),
                 ),
                 if (hasMedication)
@@ -72,7 +69,7 @@ class DailyCalendarBar extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 4),
                     width: 6,
                     height: 6,
-                    decoration:  BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.blue[700],
                       shape: BoxShape.circle,
                     ),

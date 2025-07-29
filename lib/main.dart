@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-
+// Importez vos composants séparés
 import 'models/medication.dart';
 import 'services/medication_data_service.dart';
 import 'providers/medication_provider.dart';
 import 'screens/home_screen.dart';
-
+import 'screens/full_calendar_screen.dart';
+import 'widgets/medication_card.dart';
+import 'widgets/daily_calendar_bar.dart';
+import 'utils/date_utils.dart'; // Utilitaires de date
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +20,9 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => MedicationProvider(
-        medicationService: MedicationDataService(), // Injection du service
+        medicationService: MedicationDataService(
+          baseUrl: 'https://reminder-backend-service-231068023969.us-east1.run.app', // Utilisez l'adresse IP de votre machine hôte pour l'émulateur Android, ou 'http://localhost:8000' pour le simulateur iOS ou le web.
+        ),
       ),
       child: const MyApp(),
     ),
@@ -34,7 +39,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'Inter', // Utilisation de la police Inter
+        fontFamily: 'Inter',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const HomeScreen(),
