@@ -49,4 +49,12 @@ jobs:
             --service-account patient-back-deployment@grounded-datum-466612-u9.iam.gserviceaccount.com \
             --port 8000 \
             --quiet
+
+      - name: Add IAM Policy Binding to Make Service Public
+        run: |
+          gcloud run services add-iam-policy-binding reminder-backend \
+            --region us-central1 \
+            --project grounded-datum-466612-u9 \
+            --member="allUsers" \
+            --role="roles/run.invoker"
             
