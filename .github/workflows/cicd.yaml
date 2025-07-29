@@ -47,5 +47,6 @@ jobs:
             --region us-central1 \
             --platform managed \
             --service-account patient-back-deployment@grounded-datum-466612-u9.iam.gserviceaccount.com \
+            --port 8000 \
             --quiet
-            --port 8000
+            
