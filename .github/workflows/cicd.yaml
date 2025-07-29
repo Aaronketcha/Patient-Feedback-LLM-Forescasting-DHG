@@ -42,9 +42,10 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image ${{ env.DOCKER_IMAGE_URL }}:latest \
+          gcloud run deploy reminder-backend \
+            --image us-central1-docker.pkg.dev/grounded-datum-466612-u9/patient-fastapi/reminder-backend:latest \
+            --region us-central1 \
             --platform managed \
-            --region ${{ env.REGION }} \
-            --allow-unauthenticated \
+            --service-account patient-back-deployment@grounded-datum-466612-u9.iam.gserviceaccount.com \
+            --quiet
             --port 8000
