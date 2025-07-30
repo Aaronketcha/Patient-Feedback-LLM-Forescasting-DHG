@@ -4,6 +4,10 @@
 "patientFeedback": "Commentaires des Patients",
 "howWasYourExperience": "Comment s'est passée votre expérience?",
 "selectLanguage": "Sélectionner la langue",
+
+"selectDepartment": "Quel service utilisé ?",
+"isUrgent": "Ce message est-il urgent ?",
+
 "overallRating": "Note globale",
 "writeYourFeedback": "Écrivez vos commentaires ici...",
 "speakYourFeedback": "Parlez vos commentaires",

@@ -124,6 +124,18 @@ abstract class AppLocalizations {
   /// **'Select Language'**
   String get selectLanguage;
 
+  /// No description provided for @selectDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Department'**
+  String get selectDepartment;
+
+  /// No description provided for @isUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Is this message urgent?'**
+  String get isUrgent;
+
   /// No description provided for @overallRating.
   ///
   /// In en, this message translates to:

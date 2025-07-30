@@ -21,6 +21,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectLanguage => 'Seleccionar idioma';
 
   @override
+  String get selectDepartment => 'Select Department';
+
+  @override
+  String get isUrgent => 'Is this message urgent?';
+
+  @override
   String get overallRating => 'Calificación general';
 
   @override

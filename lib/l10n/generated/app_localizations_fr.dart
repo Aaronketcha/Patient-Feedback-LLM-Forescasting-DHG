@@ -21,6 +21,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selectLanguage => 'Sélectionner la langue';
 
   @override
+  String get selectDepartment => 'Quel service utilisé ?';
+
+  @override
+  String get isUrgent => 'Ce message est-il urgent ?';
+
+  @override
   String get overallRating => 'Note globale';
 
   @override
