@@ -48,6 +48,7 @@ jobs:
             --platform managed \
             --service-account patient-back-deployment@grounded-datum-466612-u9.iam.gserviceaccount.com \
             --port 8000 \
+            --timeout 180 \  # Augmente le timeout à 180 secondes
             --quiet
 
       - name: Add IAM Policy Binding to Make Service Public
