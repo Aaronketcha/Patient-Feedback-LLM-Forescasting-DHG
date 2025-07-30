@@ -10,23 +10,7 @@ from crud import load_medications_data
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Créer l'instance de l'application
-app = FastAPI(lifespan=lifespan)
-
-# Configuration du middleware CORS
-origins = [
-    "http://localhost",  # Pour les tests locaux
-    "*"  # Autorise tous les domaines (utilisez avec précaution en production)
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,  # Domaines autorisés
-    allow_credentials=True,
-    allow_methods=["*"],  # Autorise toutes les méthodes (GET, POST, etc.)
-    allow_headers=["*"],  # Autorise tous les en-têtes
-)
-
+# Définir la fonction lifespan avant de l'utiliser
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -50,6 +34,23 @@ async def lifespan(app: FastAPI):
     logging.info("Application shutdown event: Shutting down scheduler.")
     scheduler.shutdown()
     logging.info("Scheduler shut down.")
+
+# Créer l'instance de l'application après avoir défini lifespan
+app = FastAPI(lifespan=lifespan)
+
+# Configuration du middleware CORS
+origins = [
+    "http://localhost",  # Pour les tests locaux
+    "*"  # Autorise tous les domaines (utilisez avec précaution en production)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Domaines autorisés
+    allow_credentials=True,
+    allow_methods=["*"],  # Autorise toutes les méthodes (GET, POST, etc.)
+    allow_headers=["*"],  # Autorise tous les en-têtes
+)
 
 # Inclure les routeurs de l'API
 app.include_router(medications.router)
