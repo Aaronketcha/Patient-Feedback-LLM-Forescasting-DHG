@@ -7,6 +7,8 @@ class FeedbackModel {
   final String language;
   final DateTime timestamp;
   final String patientId;
+  final String department;
+  final bool isUrgent;
 
   FeedbackModel({
     required this.id,
@@ -17,6 +19,8 @@ class FeedbackModel {
     required this.language,
     required this.timestamp,
     required this.patientId,
+    required this.department,
+    required this.isUrgent,
   });
 
   Map<String, dynamic> toJson() {
@@ -29,6 +33,8 @@ class FeedbackModel {
       'language': language,
       'timestamp': timestamp.toIso8601String(),
       'patientId': patientId,
+      'department': department,
+      'isUrgent': isUrgent,
     };
   }
 
@@ -42,6 +48,8 @@ class FeedbackModel {
       language: json['language'],
       timestamp: DateTime.parse(json['timestamp']),
       patientId: json['patientId'],
+      department: json['department'],
+      isUrgent: json['isUrgent']?? false,
     );
   }
 }
@@ -98,6 +106,8 @@ class FeedbackConstants {
   static const List<Map<String, String>> supportedLanguages = [
     {'code': 'en', 'name': 'English'},
     {'code': 'fr', 'name': 'Français'},
-    {'code': 'es', 'name': 'Español'},
+    {'code': 'ew', 'name': 'Ewondo'},
+    {'code': 'du', 'name': 'Duala'},
+    {'code': 'ba', 'name': 'Bassa'},
   ];
 }

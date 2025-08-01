@@ -4,6 +4,10 @@
 "patientFeedback": "Patient Feedback",
 "howWasYourExperience": "How was your experience?",
 "selectLanguage": "Select Language",
+
+"selectDepartment": "Select Department",
+"isUrgent": "Is this message urgent?",
+
 "overallRating": "Overall Rating",
 "writeYourFeedback": "Write your feedback here...",
 "speakYourFeedback": "Speak your feedback",
