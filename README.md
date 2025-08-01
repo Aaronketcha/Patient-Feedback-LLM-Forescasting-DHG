@@ -1,82 +1,82 @@
-# Patient Feedback System
+# Système de Retour des Patients
 
-A FastAPI-based API for managing patient feedback and reminders in healthcare facilities, optimized for low-bandwidth environments.
+Une API basée sur FastAPI pour gérer les retours et rappels des patients dans les établissements de santé, optimisée pour les environnements à faible bande passante.
 
-## Features
-- **Authentication**: JWT-based authentication for patients and admins.
-- **Feedback Management**: Submit text or voice feedback, with sentiment analysis, theme extraction, and urgency detection.
-- **Voice Transcription**: Automatic transcription of audio feedback using `speech_recognition`.
-- **Translation**: Translate feedback from local languages (Douala, Bassa) to English.
-- **Reminders**: Schedule and send reminders via WhatsApp, SMS, or voice calls using Twilio.
-- **Analytics**: Dashboard metrics for admins, including satisfaction rates and urgent issues.
-- **Optimizations**:
-  - Gzip compression for API responses and Celery tasks.
-  - Redis caching for frequent queries.
-  - Offline queue for Twilio messages using SQLite.
-  - Lightweight NLP model (`distilbert-base-multilingual-cased`).
-  - Offline language detection with `fasttext`.
-  - Translation datasets stored in PostgreSQL.
+## Fonctionnalités
+- **Authentification** : Authentification basée sur JWT pour les patients et les administrateurs.
+- **Gestion des retours** : Soumission de retours textuels ou vocaux, avec analyse de sentiment, extraction de thèmes et détection d’urgence.
+- **Transcription vocale** : Transcription automatique des retours audio à l’aide de `speech_recognition`.
+- **Traduction** : Traduction des retours depuis les langues locales (Douala, Bassa) vers l’anglais.
+- **Rappels** : Planification et envoi de rappels via WhatsApp, SMS ou appels vocaux à l’aide de Twilio.
+- **Analytique** : Métriques du tableau de bord pour les administrateurs, incluant les taux de satisfaction et les problèmes urgents.
+- **Optimisations** :
+  - Compression Gzip pour les réponses API et les tâches Celery.
+  - Mise en cache Redis pour les requêtes fréquentes.
+  - File d’attente hors ligne pour les messages Twilio utilisant SQLite.
+  - Modèle NLP léger (`distilbert-base-multilingual-cased`).
+  - Détection de langue hors ligne avec `fasttext`.
+  - Ensembles de données de traduction stockés dans PostgreSQL.
 
-## Requirements
+## Prérequis
 - Python 3.9+
 - PostgreSQL
 - Redis
-- Twilio account
-- FastText model (`lid.176.bin`)
+- Compte Twilio
+- Modèle FastText (`lid.176.bin`)
 
-## Setup
-1. Clone the repository:
+## Configuration
+1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/your-repo/patient-feedback-system.git
+   git clone https://github.com/votre-repo/patient-feedback-system.git
    cd patient-feedback-system
    ```
-2. Install dependencies:
+2. Installer les dépendances :
    ```bash
    pip install -r requirements.txt
    ```
-3. Set environment variables in `.env`:
+3. Configurer les variables d’environnement dans `.env` :
    ```bash
    DATABASE_URL=postgresql://postgres:123@localhost:5432/feedback_db
-   JWT_SECRET_KEY=your-secret-key
-   TWILIO_ACCOUNT_SID=your-twilio-sid
-   TWILIO_AUTH_TOKEN=your-twilio-token
+   JWT_SECRET_KEY=votre-cle-secrete
+   TWILIO_ACCOUNT_SID=votre-sid-twilio
+   TWILIO_AUTH_TOKEN=votre-token-twilio
    TWILIO_WHATSAPP_NUMBER=whatsapp:+1234567890
    TWILIO_PHONE_NUMBER=+1234567890
    CELERY_BROKER_URL=redis://localhost:6379/0
    CELERY_RESULT_BACKEND=redis://localhost:6379/0
-   ENCRYPTION_KEY=your-encryption-key
-   FASTTEXT_MODEL=/path/to/lid.176.bin
+   ENCRYPTION_KEY=votre-cle-de-chiffrement
+   FASTTEXT_MODEL=/chemin/vers/lid.176.bin
    ```
-4. Initialize the database:
+4. Initialiser la base de données :
    ```bash
    python -c "from app.database import init_db; init_db()"
    ```
-5. Run the API:
+5. Lancer l’API :
    ```bash
    uvicorn app.main:app --host 0.0.0.0 --port 8000
    ```
-6. Start Celery worker and beat:
+6. Démarrer le worker et le beat de Celery :
    ```bash
    celery -A app.celery_app worker --loglevel=info
    celery -A app.celery_app beat --loglevel=info
    ```
 
-## Docker Setup
-1. Build and run with Docker Compose:
+## Configuration avec Docker
+1. Construire et exécuter avec Docker Compose :
    ```bash
    docker-compose up --build
    ```
-2. Access the API at `http://localhost:8000`.
+2. Accéder à l’API à `http://localhost:8000`.
 
-## API Endpoints
-- **Auth**: `/auth/token` (POST)
-- **Feedback**:
+## Points de terminaison de l’API
+- **Authentification** : `/auth/token` (POST)
+- **Retours** :
   - `/feedback/submit` (POST)
   - `/feedback/transcribe` (POST)
   - `/feedback/metrics` (GET)
   - `/feedback/dashboard/metrics` (GET)
   - `/feedback/dashboard/export` (GET)
-- **Reminders**:
+- **Rappels** :
   - `/reminders/create` (POST)
   - `/reminders/list` (GET)
   - `/reminders/trigger` (POST)
@@ -84,13 +84,13 @@ A FastAPI-based API for managing patient feedback and reminders in healthcare fa
   - `/reminders/update/{reminder_id}` (PUT)
   - `/reminders/search` (GET)
 
-## Testing
-Run tests with:
+## Tests
+Exécuter les tests avec :
 ```bash
 pytest tests/
 ```
 
-## Notes
-- Ensure `lid.176.bin` is downloaded and placed in `/app/models/`.
-- Audio files are temporarily stored in `/tmp/` for transcription.
-- Translation datasets (`eng_douala.csv`, `eng_bassa.csv`) are loaded into PostgreSQL on startup.
+## Remarques
+- Assurez-vous que `lid.176.bin` est téléchargé et placé dans `/app/models/`.
+- Les fichiers audio sont temporairement stockés dans `/tmp/` pour la transcription.
+- Les ensembles de données de traduction (`eng_douala.csv`, `eng_bassa.csv`) sont chargés dans PostgreSQL au démarrage.
