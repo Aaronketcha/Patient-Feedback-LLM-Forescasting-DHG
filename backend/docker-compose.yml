@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: patient-feedback-api:latest
+    depends_on:
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://postgres:123@localhost:5432/feedback_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_WHATSAPP_NUMBER=${TWILIO_WHATSAPP_NUMBER}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ENV=development
+      - FASTTEXT_MODEL=/app/models/lid.176.bin
+    volumes:
+      - ./app.log:/app/app.log
+      - ./datasets:/app/datasets:ro
+      - ./twilio_queue.db:/app/twilio_queue.db
+      - ./models:/app/models
+    ports:
+      - "8000:8000"
+    networks:
+      - feedback-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  redis:
+    image: redis:6
+    volumes:
+      - redis_data:/data
+    networks:
+      - feedback-network
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: patient-feedback-api:latest
+    depends_on:
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://postgres:123@localhost:5432/feedback_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_WHATSAPP_NUMBER=${TWILIO_WHATSAPP_NUMBER}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ENV=development
+      - FASTTEXT_MODEL=/app/models/lid.176.bin
+    volumes:
+      - ./app.log:/app/app.log
+      - ./datasets:/app/datasets:ro
+      - ./twilio_queue.db:/app/twilio_queue.db
+      - ./models:/app/models
+    networks:
+      - feedback-network
+    command: celery -A app.celery_app worker --loglevel=info
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: patient-feedback-api:latest
+    depends_on:
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://postgres:123@localhost:5432/feedback_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_WHATSAPP_NUMBER=${TWILIO_WHATSAPP_NUMBER}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ENV=development
+      - FASTTEXT_MODEL=/app/models/lid.176.bin
+    volumes:
+      - ./app.log:/app/app.log
+      - ./datasets:/app/datasets:ro
+      - ./twilio_queue.db:/app/twilio_queue.db
+      - ./models:/app/models
+    networks:
+      - feedback-network
+    command: celery -A app.celery_app beat --loglevel=info
+
+volumes:
+  redis_data:
+
+networks:
+  feedback-network:
+    driver: bridge
