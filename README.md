@@ -12,7 +12,7 @@ Cette API fournit un système robuste pour gérer les retours des patients et le
   - Rechercher des rappels avec des filtres (méthode, langue, statut d'envoi, heure planifiée, raison du rendez-vous).
   - Support de la pagination pour la liste et la recherche des rappels.
 - **Tâches Périodiques** : Déclencher automatiquement les rappels en attente toutes les heures avec Celery et Redis.
-- **Validation des Données** : Valider les numéros de téléphone, les méthodes de rappel (`whatsapp`, `sms`, `call`) et les langues (`english`, `french`).
+- **Validation des Données** : Valider les numéros de téléphone, les méthodes de rappel (`whatsapp`, `sms`, `call`) et les langues ("english", "french", "bassa", "ewondo").
 - **Journalisation** : Journalisation complète de toutes les opérations (création, mises à jour, suppressions, envoi de messages) avec contexte utilisateur.
 - **Base de Données** : PostgreSQL pour le stockage persistant des patients, retours et rappels.
 
