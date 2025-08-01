@@ -7,7 +7,7 @@ Une API basée sur FastAPI pour gérer les retours et rappels des patients dans 
 - **Gestion des retours** : Soumission de retours textuels ou vocaux, avec analyse de sentiment, extraction de thèmes et détection d’urgence.
 - **Transcription vocale** : Transcription automatique des retours audio à l’aide de `speech_recognition`.
 - **Traduction** : Traduction des retours depuis les langues locales (Douala, Bassa) vers l’anglais.
-- **Rappels** : Planification et envoi de rappels via WhatsApp, SMS ou appels vocaux à l’aide de Twilio.
+- **Rappels** : Planification et envoi de rappels via WhatsApp, SMS  à l’aide de Twilio.
 - **Analytique** : Métriques du tableau de bord pour les administrateurs, incluant les taux de satisfaction et les problèmes urgents.
 - **Optimisations** :
   - Compression Gzip pour les réponses API et les tâches Celery.
